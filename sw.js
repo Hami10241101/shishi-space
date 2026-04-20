@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shishi-space-v1';
+const CACHE_NAME = 'shishi-space-v3';
 const ASSETS = [
   './index.html',
   './manifest.json'
