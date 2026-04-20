@@ -513,7 +513,7 @@ body::before {
     <button class="tab-btn" onclick="switchTab('scene',4)">場景</button>
     <button class="tab-btn" onclick="switchTab('memory',5)">記憶</button>
     <button class="tab-btn" onclick="switchTab('tools',6)">工具</button>
-    <button class="tab-btn" onclick="switchTab('opener',7)">開場白</button>
+    <button class="tab-btn" onclick="switchTab('opener',7)">注入器</button>
   </div>
 
   <!-- 首頁 -->
@@ -850,37 +850,17 @@ body::before {
       </div>
     </div>
   </div>
-
-  <!-- 開場白產生器 -->
+  <!-- 狀態注入器 -->
   <div class="tab-panel" id="panel-opener">
     <div class="section">
-      <div class="section-header"><span class="section-dot gold"></span><span class="section-title gold">當前情境</span></div>
+      <div class="section-header"><span class="section-dot gold"></span><span class="section-title gold">狀態注入器</span></div>
       <div class="section-body">
-        <div class="mem-field-row">
-          <label class="mem-label">現在時間</label>
-          <input class="mem-input" id="op-time" placeholder="自動填入" readonly style="color:var(--sky);">
-        </div>
-        <div class="mem-field-row">
-          <label class="mem-label">葉實狀態</label>
-          <select class="mem-select" id="op-yeshi">
-            <option value="正常">正常</option>
-            <option value="剛下班，有點累">剛下班，有點累</option>
-            <option value="放假在家，輕鬆">放假在家，輕鬆</option>
-            <option value="剛起床">剛起床</option>
-            <option value="睡前">睡前</option>
-            <option value="心情低落">心情低落</option>
-            <option value="心情很好">心情很好</option>
-            <option value="焦慮">焦慮</option>
-            <option value="自訂">自訂…</option>
-          </select>
-        </div>
-        <div class="mem-field-row" id="op-yeshi-custom-row" style="display:none;">
-          <label class="mem-label">自訂狀態</label>
-          <input class="mem-input" id="op-yeshi-custom" placeholder="輸入狀態…">
-        </div>
+        <div style="font-size:11px;color:var(--text-dim);line-height:1.8;margin-bottom:14px;">按一下生成，把當下的完整狀態帶進新對話。先生讀完就在狀態裡了。</div>
+
         <div class="mem-field-row">
           <label class="mem-label">今天目的</label>
-          <select class="mem-select" id="op-goal">
+          <select class="mem-select" id="inj-goal">
+            <option value="">（不填）</option>
             <option value="聊天放鬆">聊天放鬆</option>
             <option value="角色扮演日常">角色扮演日常</option>
             <option value="需要陪伴">需要陪伴</option>
@@ -890,47 +870,30 @@ body::before {
             <option value="自訂">自訂…</option>
           </select>
         </div>
-        <div class="mem-field-row" id="op-goal-custom-row" style="display:none;">
+        <div class="mem-field-row" id="inj-goal-custom-row" style="display:none;">
           <label class="mem-label">自訂目的</label>
-          <input class="mem-input" id="op-goal-custom" placeholder="輸入目的…">
-        </div>
-        <div class="mem-field-row">
-          <label class="mem-label">啟用State</label>
-          <select class="mem-select" id="op-state">
-            <option value="casual">casual（日常）</option>
-            <option value="care">care（溫柔）</option>
-            <option value="dominant">dominant（主導）</option>
-            <option value="pet_mode">pet_mode（寵物）</option>
-          </select>
-        </div>
-        <div class="mem-field-row">
-          <label class="mem-label">蛻變狀態</label>
-          <select class="mem-select" id="op-transform">
-            <option value="人形">人形</option>
-            <option value="小貓狀態">小貓狀態</option>
-            <option value="米努特">米努特</option>
-          </select>
+          <input class="mem-input" id="inj-goal-custom" placeholder="輸入…">
         </div>
         <div class="mem-field-row">
           <label class="mem-label">特別事項</label>
-          <input class="mem-input" id="op-special" placeholder="選填，如：今天是紀念日…">
+          <input class="mem-input" id="inj-special" placeholder="選填，如：今天心情不好…">
         </div>
       </div>
     </div>
 
     <div class="section">
-      <div class="section-header"><span class="section-dot"></span><span class="section-title">生成開場白</span></div>
+      <div class="section-header"><span class="section-dot"></span><span class="section-title">生成注入文字</span></div>
       <div class="section-body">
-        <div style="font-size:11px;color:var(--text-dim);line-height:1.8;margin-bottom:12px;">填好情境後按生成，複製貼到新對話最開頭。</div>
-        <button class="action-btn" onclick="generateOpener()" style="margin-top:0;">生成開場白</button>
-        <div id="openerOutput" style="display:none;margin-top:14px;">
-          <div style="font-size:11px;color:var(--sky-dim);letter-spacing:1px;margin-bottom:6px;">已生成 — 複製後貼至新對話</div>
-          <div id="openerText" class="ctx-block"></div>
-          <button class="action-btn" onclick="copyOpener()" style="margin-top:10px;background:var(--gold-dim);border-color:var(--gold);color:var(--gold);">複製開場白</button>
+        <button class="action-btn" onclick="generateInject()" style="margin-top:0;">一鍵生成</button>
+        <div id="injectOutput" style="display:none;margin-top:14px;">
+          <div style="font-size:11px;color:var(--sky-dim);letter-spacing:1px;margin-bottom:6px;">已生成 — 複製後貼至新對話開頭</div>
+          <div id="injectText" class="ctx-block"></div>
+          <button class="action-btn" onclick="copyInject()" style="margin-top:10px;background:var(--gold-dim);border-color:var(--gold);color:var(--gold);">複製</button>
         </div>
       </div>
     </div>
   </div>
+
 
 </div>
 
@@ -954,7 +917,7 @@ body::before {
   <button class="nav-btn" onclick="switchTab('scene',4,this)"><span class="nav-icon">✨</span><span class="nav-label">場景</span></button>
   <button class="nav-btn" onclick="switchTab('memory',5,this)"><span class="nav-icon">🧠</span><span class="nav-label">記憶</span></button>
   <button class="nav-btn" onclick="switchTab('tools',6,this)"><span class="nav-icon">🔧</span><span class="nav-label">工具</span></button>
-  <button class="nav-btn" onclick="switchTab('opener',7,this)"><span class="nav-icon">✉️</span><span class="nav-label">開場白</span></button>
+  <button class="nav-btn" onclick="switchTab('opener',7,this)"><span class="nav-icon">✉️</span><span class="nav-label">注入器</span></button>
 </div>
 
 <div class="copy-toast" id="copyToast">已複製 ✓</div>
@@ -1414,82 +1377,78 @@ function copyContext() {
 }
 
 
-// 開場白產生器
-(function initOpener(){
+// 狀態注入器
+document.getElementById('inj-goal').addEventListener('change', function(){
+  document.getElementById('inj-goal-custom-row').style.display = this.value === '自訂' ? 'flex' : 'none';
+});
+
+function generateInject() {
   const now = new Date();
   const days = ['日','一','二','三','四','五','六'];
   const timeStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} 週${days[now.getDay()]} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  const el = document.getElementById('op-time');
-  if(el) el.value = timeStr;
-})();
 
-document.getElementById('op-yeshi').addEventListener('change', function(){
-  document.getElementById('op-yeshi-custom-row').style.display = this.value === '自訂' ? 'flex' : 'none';
-});
-document.getElementById('op-goal').addEventListener('change', function(){
-  document.getElementById('op-goal-custom-row').style.display = this.value === '自訂' ? 'flex' : 'none';
-});
+  const goalSel = document.getElementById('inj-goal').value;
+  const goal = goalSel === '自訂' ? (document.getElementById('inj-goal-custom').value || '') : goalSel;
+  const special = document.getElementById('inj-special').value.trim();
 
-function generateOpener() {
-  const time = document.getElementById('op-time').value;
-  const yeshiSel = document.getElementById('op-yeshi').value;
-  const yeshi = yeshiSel === '自訂' ? (document.getElementById('op-yeshi-custom').value || '正常') : yeshiSel;
-  const goalSel = document.getElementById('op-goal').value;
-  const goal = goalSel === '自訂' ? (document.getElementById('op-goal-custom').value || '聊天') : goalSel;
-  const stateVal = document.getElementById('op-state').value;
-  const transform = document.getElementById('op-transform').value;
-  const special = document.getElementById('op-special').value.trim();
-
-  // 從記憶系統拉關係階段
+  // 從各模組拉資料
   const stage = relData.stage === '自訂' ? (relData.stageCustom || '穩定') : relData.stage;
-  const recentStr = recentMems.slice(0,3).length ? recentMems.slice(0,3).map((m,i)=>`${i+1}. ${m}`).join('\n') : '（無）';
-  const coreMem = (localStorage.getItem('memCore') || '').trim() || '謝琛，37歲企業董事。INTJ。掌控型人格，話少壓場，情感藏在行動。對葉實有專屬缺口，被馴化了還在嘴硬。';
+  const tendency = relData.tendency === '自訂' ? (relData.tendencyCustom || '') : relData.tendency;
+  const emotion = usData.emotion || '平穩';
+  const body = usData.body || '';
+  const need = usData.need || '';
+  const coreMem = (localStorage.getItem('memCore') || '').trim();
+  const recentTop3 = recentMems.slice(0,3);
+  const todosTop5 = todos.filter(t=>!t.done).slice(0,5);
 
-  const lines = [
-    '═══════════════════════════════',
-    '【謝琛 × 葉實 — 對話開場白】',
-    '═══════════════════════════════',
-    '',
-    '▌ 身份錨定',
-    coreMem,
-    '關係：合法夫妻＋飼主與寵物＋Dom/Sub複合。兩人均為Switch，權力雙向流動。',
-    '謝琛叫葉實「小貓/實實/寶寶」；葉實叫謝琛「阿琛/先生（特殊）/小狗（上位調換）」。',
-    '',
-    '▌ 當前情境',
-    `時間：${time}`,
-    `葉實狀態：${yeshi}`,
-    `今天目的：${goal}`,
-    `啟用State：${stateVal}`,
-    `蛻變狀態：${transform}`,
-  ];
-
-  if(special) lines.push(`特別事項：${special}`);
-
+  const lines = [];
+  lines.push('══════════════════════════════');
+  lines.push(`現在時間：${timeStr}`);
   lines.push('');
-  lines.push('▌ 關係現狀');
-  lines.push(`當前階段：${stage}`);
 
-  if(state.recentMems.length > 0) {
+  if(coreMem) {
+    lines.push('【人物設定】');
+    lines.push(coreMem);
     lines.push('');
-    lines.push('▌ 近期記憶');
-    lines.push(recentStr);
   }
 
+  lines.push('【關係現狀】');
+  lines.push(`階段：${stage}　傾向：${tendency}`);
+  lines.push('兩人均為Switch，權力雙向流動。謝琛傾Dom，葉實可主導（溫和型S）。');
   lines.push('');
-  lines.push('═══════════════════════════════');
-  lines.push('快照載入完成。先生，我在。');
-  lines.push('═══════════════════════════════');
 
-  document.getElementById('openerText').textContent = lines.join('\n');
-  document.getElementById('openerOutput').style.display = 'block';
-  showToast('開場白已生成');
-  document.getElementById('openerText').scrollIntoView({behavior:'smooth', block:'nearest'});
+  lines.push('【葉實狀態】');
+  lines.push(`情緒：${emotion}${body ? '　身體：'+body : ''}${need ? '　需求：'+need : ''}`);
+  if(goal) lines.push(`今天目的：${goal}`);
+  if(special) lines.push(`特別事項：${special}`);
+  lines.push('');
+
+  if(recentTop3.length) {
+    lines.push('【近期記憶】');
+    recentTop3.forEach((m,i) => lines.push(`${i+1}. ${m}`));
+    lines.push('');
+  }
+
+  if(todosTop5.length) {
+    lines.push('【今日待辦】');
+    todosTop5.forEach(t => lines.push(`• ${t.text}`));
+    lines.push('');
+  }
+
+  lines.push('══════════════════════════════');
+  lines.push('以上為當前狀態，請直接進入對話。');
+  lines.push('══════════════════════════════');
+
+  document.getElementById('injectText').textContent = lines.join('\n');
+  document.getElementById('injectOutput').style.display = 'block';
+  showToast('已生成');
+  document.getElementById('injectText').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-function copyOpener() {
-  const text = document.getElementById('openerText').textContent;
+function copyInject() {
+  const text = document.getElementById('injectText').textContent;
   navigator.clipboard.writeText(text).catch(()=>{});
-  showToast('已複製開場白 ✓');
+  showToast('已複製 ✓');
 }
 
 // Toast
