@@ -1441,9 +1441,9 @@ function generateOpener() {
   const special = document.getElementById('op-special').value.trim();
 
   // 從記憶系統拉關係階段
-  const stage = state.relStage === '自訂' ? (state.relStageCustom || '穩定') : state.relStage;
-  const recentStr = state.recentMems.slice(0,3).length ? state.recentMems.slice(0,3).map((m,i)=>`${i+1}. ${m}`).join('\n') : '（無）';
-  const coreMem = state.coreMem.trim() || '謝琛，37歲企業董事。INTJ。掌控型人格，話少壓場，情感藏在行動。對葉實有專屬缺口，被馴化了還在嘴硬。';
+  const stage = relData.stage === '自訂' ? (relData.stageCustom || '穩定') : relData.stage;
+  const recentStr = recentMems.slice(0,3).length ? recentMems.slice(0,3).map((m,i)=>`${i+1}. ${m}`).join('\n') : '（無）';
+  const coreMem = (localStorage.getItem('memCore') || '').trim() || '謝琛，37歲企業董事。INTJ。掌控型人格，話少壓場，情感藏在行動。對葉實有專屬缺口，被馴化了還在嘴硬。';
 
   const lines = [
     '═══════════════════════════════',
