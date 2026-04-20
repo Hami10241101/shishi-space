@@ -429,12 +429,13 @@ body::before {
   padding-bottom: env(safe-area-inset-bottom);
 }
 .nav-btn {
-  flex: 1; padding: 10px 4px; background: transparent;
+  flex: 1; padding: 8px 2px; background: transparent;
   border: none; cursor: pointer;
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  min-width: 0;
 }
-.nav-icon { font-size: 20px; }
-.nav-label { font-size: 9px; color: var(--text-dim); letter-spacing: 1px; font-family: 'Noto Sans TC', sans-serif; }
+.nav-icon { font-size: 18px; }
+.nav-label { font-size: 8px; color: var(--text-dim); letter-spacing: 0; font-family: 'Noto Sans TC', sans-serif; white-space: nowrap; }
 .nav-btn.active .nav-label { color: var(--sky); }
 .nav-btn.active .nav-icon { filter: drop-shadow(0 0 4px var(--sky)); }
 
@@ -1024,7 +1025,10 @@ function autoSaveNote() {
 
 // 喝水
 let waterData = JSON.parse(localStorage.getItem('waterData') || '{"count":0,"lastTime":null,"date":""}');
-if(waterData.date !== today) waterData = {count:0, lastTime:null, date:today};
+if(waterData.date !== today) {
+  waterData = {count:0, lastTime:null, date:today};
+  localStorage.setItem('waterData', JSON.stringify(waterData));
+}
 function renderWater() {
   document.getElementById('waterCount').textContent = waterData.count;
   const cups = document.getElementById('waterCups');
@@ -1180,7 +1184,8 @@ function logMood() {
   if(!selectedMood){showToast('請先選擇一個狀態'); return;}
   const now=new Date(), time=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
   const note=document.getElementById('moodNote').value.trim();
-  moodHistory.push({mood:selectedMood,time,note});
+  const mdate=`${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}`;
+  moodHistory.push({mood:selectedMood,time,note,date:mdate});
   localStorage.setItem('moodHistory_'+today,JSON.stringify(moodHistory));
   document.getElementById('moodNote').value='';
   selectedMood=null;
@@ -1194,6 +1199,7 @@ function renderMoodHistory() {
   moodHistory.forEach(h=>{
     html+=`<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
       <div style="font-size:22px;">${moodEmojis[h.mood]}</div>
+      <div style="font-size:10px;color:var(--sky);">${h.date||''}</div>
       <div style="font-size:10px;color:var(--text-dim);">${h.time}</div>
       ${h.note?`<div style="font-size:10px;color:var(--text-dim);max-width:60px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${h.note}">${h.note}</div>`:''}
     </div>`;
