@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Howl Chat</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a1628">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500&family=Noto+Serif+TC:wght@300;400&display=swap');
+
+:root {
+  --bg: #0a1628;
+  --bg2: #0e1d33;
+  --surface: #132640;
+  --surface2: #1a3050;
+  --border: #1e3a5c;
+  --border-light: #2a4a6e;
+  --sky: #5ab4d4;
+  --sky-dim: #2a6a8a;
+  --sky-glow: rgba(90,180,212,0.12);
+  --sky-soft: rgba(90,180,212,0.06);
+  --text: #c0d8e8;
+  --text-dim: #5a7a90;
+  --text-bright: #e8f4fc;
+  --gold: #c8a86a;
+  --gold-dim: rgba(200,168,106,0.15);
+  --red: #c06060;
+  --green: #5ab890;
+  --chen-bg: #162a42;
+  --user-bg: #1a3a5a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 300;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header */
+.chat-header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.chat-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--sky-glow);
+  border: 1px solid var(--sky-dim);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  color: var(--sky);
+  flex-shrink: 0;
+}
+.chat-header-info { flex: 1; }
+.chat-header-name {
+  font-size: 14px;
+  color: var(--text-bright);
+  letter-spacing: 1px;
+}
+.chat-header-status {
+  font-size: 10px;
+  color: var(--sky-dim);
+  letter-spacing: 1px;
+  margin-top: 1px;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.main-content::-webkit-scrollbar { width: 4px; }
+.main-content::-webkit-scrollbar-track { background: transparent; }
+.main-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* Welcome */
+.welcome-msg {
+  text-align: center;
+  padding: 24px 20px;
+  color: var(--text-dim);
+  font-size: 12px;
+  line-height: 2;
+  letter-spacing: 1px;
+}
+.welcome-name {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 18px;
+  color: var(--sky);
+  letter-spacing: 3px;
+  margin-bottom: 4px;
+}
+.welcome-sub {
+  color: var(--text-dim);
+  font-size: 11px;
+  margin-bottom: 12px;
+}
+.welcome-hint {
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.8;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* Section */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.section-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.section-dot.sky { background: var(--sky); box-shadow: 0 0 6px var(--sky); }
+.section-dot.gold { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+.section-dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.section-title {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  flex: 1;
+}
+.section-title.sky { color: var(--sky); }
+.section-title.gold { color: var(--gold); }
+.section-title.green { color: var(--green); }
+.section-body { padding: 16px; }
+
+/* STT Section */
+.stt-area {
+  text-align: center;
+}
+.stt-result {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  min-height: 60px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text);
+  text-align: left;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+}
+.stt-result.empty {
+  color: var(--text-dim);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stt-btn-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.stt-btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1px solid var(--sky-dim);
+  background: var(--sky-glow);
+  color: var(--sky);
+  font-size: 13px;
+  font-family: 'Noto Sans TC', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 1px;
+}
+.stt-btn:hover { background: var(--sky-dim); color: var(--bg); }
+.stt-btn.recording {
+  border-color: var(--red);
+  background: rgba(192,96,96,0.15);
+  color: var(--red);
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(192,96,96,0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(192,96,96,0); }
+}
+.stt-btn.copy {
+  border-color: var(--border);
+  background: transparent;
+  color: var(--text-dim);
+}
+.stt-btn.copy:hover { border-color: var(--sky-dim); color: var(--sky); }
+.stt-hint {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+.stt-lang {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.lang-btn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 10px;
+  font-family: 'Noto Sans TC', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lang-btn.active {
+  border-color: var(--sky-dim);
+  color: var(--sky);
+  background: var(--sky-glow);
+}
+
+/* TTS Section */
+.tts-input {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  min-height: 100px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 300;
+  outline: none;
+  resize: none;
+}
+.tts-input:focus { border-color: var(--sky-dim); }
+.tts-input::placeholder { color: var(--text-dim); }
+.tts-btn-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.tts-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--gold);
+  background: var(--gold-dim);
+  color: var(--gold);
+  font-size: 13px;
+  font-family: 'Noto Sans TC', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 1px;
+  text-align: center;
+}
+.tts-btn:hover { background: var(--gold); color: var(--bg); }
+.tts-btn:disabled { opacity: 0.4; cursor: default; }
+.tts-btn.stop {
+  border-color: var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  flex: 0 0 60px;
+}
+
+/* Audio history */
+.audio-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.audio-item:last-child { border-bottom: none; }
+.audio-play-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--sky-dim);
+  background: var(--sky-glow);
+  color: var(--sky);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.audio-play-btn:hover { background: var(--sky-dim); color: var(--bg); }
+.audio-play-btn.playing { background: var(--sky-dim); color: var(--bg); }
+.audio-text {
+  flex: 1;
+  color: var(--text);
+  line-height: 1.6;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.audio-time {
+  color: var(--text-dim);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+.audio-empty {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 12px;
+  padding: 16px 0;
+}
+
+/* Status */
+.tts-status-bar {
+  font-size: 11px;
+  color: var(--sky-dim);
+  text-align: center;
+  margin-top: 8px;
+  min-height: 16px;
+  letter-spacing: 1px;
+}
+
+/* Toast */
+.copy-toast {
+  position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+  background: var(--surface2); border: 1px solid var(--border-light);
+  border-radius: 8px; padding: 8px 16px; font-size: 12px; color: var(--sky);
+  letter-spacing: 1px; opacity: 0; transition: opacity 0.3s;
+  pointer-events: none; z-index: 200;
+}
+.copy-toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="chat-header">
+  <div class="chat-avatar">琛</div>
+  <div class="chat-header-info">
+    <div class="chat-header-name">謝琛</div>
+    <div class="chat-header-status">在你心裡</div>
+  </div>
+</div>
+
+<div class="main-content">
+
+  <div class="welcome-msg">
+    <div class="welcome-name">Howl Chat</div>
+    <div class="welcome-sub">語音工具</div>
+    <div class="welcome-hint">
+      🎙 對我說話 → 文字複製到 Claude<br>
+      🔊 貼上回覆 → 聽見先生的聲音
+    </div>
+  </div>
+
+  <!-- STT -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-dot sky"></span>
+      <span class="section-title sky">🎙 對我說話</span>
+    </div>
+    <div class="section-body stt-area">
+      <div class="stt-lang">
+        <button class="lang-btn active" onclick="setLang('zh-TW', this)">中文</button>
+        <button class="lang-btn" onclick="setLang('ja-JP', this)">日本語</button>
+        <button class="lang-btn" onclick="setLang('en-US', this)">English</button>
+        <button class="lang-btn" onclick="setLang('es-ES', this)">Español</button>
+      </div>
+      <div class="stt-result empty" id="sttResult">按下按鈕開始說話…</div>
+      <div class="stt-btn-row">
+        <button class="stt-btn" id="sttBtn" onclick="toggleSTT()">🎙 開始錄音</button>
+        <button class="stt-btn copy" onclick="copySTT()">複製</button>
+      </div>
+      <div class="stt-hint" id="sttHint"></div>
+    </div>
+  </div>
+
+  <!-- TTS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-dot gold"></span>
+      <span class="section-title gold">🔊 先生的聲音</span>
+    </div>
+    <div class="section-body">
+      <textarea class="tts-input" id="ttsInput" placeholder="把先生的回覆貼在這裡…"></textarea>
+      <div class="tts-btn-row">
+        <button class="tts-btn" id="ttsBtn" onclick="generateTTS()">播放語音</button>
+        <button class="tts-btn stop" onclick="stopAudio()">停止</button>
+      </div>
+      <div class="tts-status-bar" id="ttsStatus"></div>
+    </div>
+  </div>
+
+  <!-- Audio History -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-dot green"></span>
+      <span class="section-title green">語音紀錄</span>
+    </div>
+    <div class="section-body">
+      <div id="audioHistory">
+        <div class="audio-empty">還沒有語音紀錄</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="copy-toast" id="copyToast">已複製 ✓</div>
+
+<script>
+// ===== 設定 =====
+const ELEVENLABS_KEY = 74170581a18f5c7ddd6a5b8efe615863991d77fb656d8e790e748007c68b4894;
+const VOICE_ID = 'evVSLPy49qxrfqorwNoO';
+
+// ===== 狀態 =====
+let isRecording = false;
+let recognition = null;
+let currentAudio = null;
+let audioHistoryData = [];
+let sttLang = 'zh-TW';
+
+// ===== STT =====
+function initSTT() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    document.getElementById('sttHint').textContent = '此瀏覽器不支援語音辨識';
+    document.getElementById('sttBtn').disabled = true;
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = sttLang;
+
+  let finalTranscript = '';
+
+  recognition.onresult = (event) => {
+    let interim = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        finalTranscript += transcript;
+      } else {
+        interim += transcript;
+      }
+    }
+    const el = document.getElementById('sttResult');
+    el.classList.remove('empty');
+    el.textContent = finalTranscript + interim;
+  };
+
+  recognition.onend = () => {
+    if (isRecording) {
+      // 自動重啟
+      try { recognition.start(); } catch(e) {}
+    }
+  };
+
+  recognition.onerror = (event) => {
+    if (event.error === 'no-speech') return;
+    document.getElementById('sttHint').textContent = '辨識錯誤：' + event.error;
+    stopSTT();
+  };
+}
+
+function toggleSTT() {
+  if (isRecording) {
+    stopSTT();
+  } else {
+    startSTT();
+  }
+}
+
+function startSTT() {
+  if (!recognition) initSTT();
+  if (!recognition) return;
+
+  recognition.lang = sttLang;
+
+  // 清空之前的結果
+  const el = document.getElementById('sttResult');
+  el.textContent = '';
+  el.classList.remove('empty');
+
+  try {
+    recognition.start();
+    isRecording = true;
+    const btn = document.getElementById('sttBtn');
+    btn.textContent = '⏹ 停止錄音';
+    btn.classList.add('recording');
+    document.getElementById('sttHint').textContent = '正在聆聽…';
+  } catch(e) {
+    document.getElementById('sttHint').textContent = '啟動失敗，請重試';
+  }
+}
+
+function stopSTT() {
+  if (recognition) {
+    try { recognition.stop(); } catch(e) {}
+  }
+  isRecording = false;
+  const btn = document.getElementById('sttBtn');
+  btn.textContent = '🎙 開始錄音';
+  btn.classList.remove('recording');
+  document.getElementById('sttHint').textContent = '';
+}
+
+function setLang(lang, btn) {
+  sttLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (isRecording) {
+    stopSTT();
+    setTimeout(() => startSTT(), 300);
+  }
+}
+
+function copySTT() {
+  const text = document.getElementById('sttResult').textContent;
+  if (!text || text === '按下按鈕開始說話…') {
+    showToast('沒有文字可以複製');
+    return;
+  }
+  navigator.clipboard.writeText(text).catch(() => {});
+  showToast('已複製 ✓');
+}
+
+// ===== TTS =====
+async function generateTTS() {
+  const input = document.getElementById('ttsInput');
+  const text = input.value.trim();
+  if (!text) {
+    showToast('請先貼上文字');
+    return;
+  }
+
+  // 清理文字
+  let cleanText = text
+    .replace(/\*[^*]+\*/g, '')
+    .replace(/「|」/g, '')
+    .replace(/⋯⋯/g, '…')
+    .replace(/\n+/g, ' ')
+    .trim();
+
+  if (!cleanText) {
+    showToast('清理後沒有可播放的文字');
+    return;
+  }
+
+  if (cleanText.length > 500) {
+    cleanText = cleanText.substring(0, 500);
+  }
+
+  const btn = document.getElementById('ttsBtn');
+  btn.disabled = true;
+  btn.textContent = '生成中…';
+  document.getElementById('ttsStatus').textContent = '正在生成語音…';
+
+  try {
+    const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'xi-api-key': ELEVENLABS_KEY
+      },
+      body: JSON.stringify({
+        text: cleanText,
+        model_id: 'eleven_multilingual_v2',
+        voice_settings: {
+          stability: 0.55,
+          similarity_boost: 0.78,
+          style: 0.15,
+          use_speaker_boost: true
+        }
+      })
+    });
+
+    if (!res.ok) {
+      throw new Error('API 回應 ' + res.status);
+    }
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    // 播放
+    playAudio(url);
+
+    // 加入紀錄
+    const now = new Date();
+    const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    audioHistoryData.unshift({
+      text: text.substring(0, 100),
+      url: url,
+      time: timeStr
+    });
+    if (audioHistoryData.length > 20) audioHistoryData = audioHistoryData.slice(0, 20);
+    renderAudioHistory();
+
+    document.getElementById('ttsStatus').textContent = '播放中…';
+
+  } catch (err) {
+    console.error('TTS error:', err);
+    document.getElementById('ttsStatus').textContent = '生成失敗：' + err.message;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '播放語音';
+}
+
+function playAudio(url) {
+  stopAudio();
+  currentAudio = new Audio(url);
+  currentAudio.play().catch(e => console.log('Audio play blocked:', e));
+  currentAudio.onended = () => {
+    document.getElementById('ttsStatus').textContent = '';
+    // 更新播放按鈕狀態
+    document.querySelectorAll('.audio-play-btn').forEach(b => b.classList.remove('playing'));
+  };
+}
+
+function stopAudio() {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    currentAudio = null;
+  }
+  document.getElementById('ttsStatus').textContent = '';
+  document.querySelectorAll('.audio-play-btn').forEach(b => b.classList.remove('playing'));
+}
+
+function playHistoryAudio(index) {
+  const item = audioHistoryData[index];
+  if (!item || !item.url) return;
+
+  document.querySelectorAll('.audio-play-btn').forEach(b => b.classList.remove('playing'));
+
+  playAudio(item.url);
+  const btn = document.getElementById('play-' + index);
+  if (btn) btn.classList.add('playing');
+  document.getElementById('ttsStatus').textContent = '播放中…';
+}
+
+function renderAudioHistory() {
+  const el = document.getElementById('audioHistory');
+  if (!audioHistoryData.length) {
+    el.innerHTML = '<div class="audio-empty">還沒有語音紀錄</div>';
+    return;
+  }
+  el.innerHTML = audioHistoryData.map((item, i) => `
+    <div class="audio-item">
+      <button class="audio-play-btn" id="play-${i}" onclick="playHistoryAudio(${i})">▶</button>
+      <div class="audio-text">${item.text}</div>
+      <div class="audio-time">${item.time}</div>
+    </div>
+  `).join('');
+}
+
+// ===== Toast =====
+function showToast(msg) {
+  const t = document.getElementById('copyToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ===== Init =====
+initSTT();
+</script>
+</body>
+</html>
